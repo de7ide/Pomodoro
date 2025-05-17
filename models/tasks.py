@@ -1,10 +1,8 @@
 from typing import Optional
 from sqlalchemy import String
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, declared_attr
+from sqlalchemy.orm import Mapped, mapped_column
 
-
-class Base(DeclarativeBase):
-    pass
+from database import Base
 
 
 class Tasks(Base):
