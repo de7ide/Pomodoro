@@ -1,13 +1,14 @@
 from fastapi import Depends
+from sqlalchemy.orm import Session
 
 from database import get_db_session
 from cache import get_redis_conn
-from repository import TaskRepo, TaskCache
-from services import TaskService
+from repository import TaskRepo, TaskCache, UserRepo
+from services import TaskService, UserService
+from services import AuthServices
 
 
-def get_tasks_repo() -> TaskRepo:
-    db_session = get_db_session()
+def get_tasks_repo(db_session: Session = Depends(get_db_session)) -> TaskRepo:
     return TaskRepo(db_session)
 
 
@@ -24,3 +25,17 @@ def get_task_service(
         task_repo=get_tasks_repo(),
         task_cache=get_cache_tasks_repo()
     )
+
+
+def get_user_repo(db_session: Session = Depends(get_db_session)):
+    return UserRepo(db_session=db_session)
+
+
+def get_user_service(
+        user_repo: UserRepo = Depends(get_user_repo)
+) -> UserService:
+    return UserService(user_repo=user_repo)
+
+
+def get_auth_service(user_repo: UserRepo = Depends(get_user_repo)) -> AuthServices:
+    return AuthServices(user_repo=user_repo)
