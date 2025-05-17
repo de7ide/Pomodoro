@@ -1,5 +1,5 @@
-from database.models import Tasks, Categories, Base
-from database.database import get_db_session, get_db_connection
+from database.database import Base
+from database.accessor import get_db_session
 
 
-__all__ = ['Tasks', 'Categories', 'get_db_session', 'Base', 'get_db_connection']
+__all__ = ['get_db_session', 'Base']
