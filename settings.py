@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     CACHE_HOST: str = "localhost"
     CACHE_PORT: int = 6379
     CACHE_DB: int = 0
+    JWT_SECRET_KEY: str = 'secretic))))'
+    JWT_ENCODE_ALGO: str = 'HS256'
 
 # postgresql+psycopg2://admin:password@localhost:5432/pomodoro
     @property
