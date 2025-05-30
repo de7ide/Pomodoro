@@ -1,12 +1,12 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import RedirectResponse
 
-from depends import get_auth_service
+from depends import get_auth_service, get_request_user_id
 from exception import UserNotFoundException, UserNotFoundPasswordException
 from schemas import UserLoginSchema, UserCreateSchema
 from services import AuthServices
-
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -20,7 +20,7 @@ async def login(
     auth_service: Annotated[AuthServices, Depends(get_auth_service)]
 ):
     try:
-        user_login_data = auth_service.login(body.username, body.password)
+        return auth_service.login(body.username, body.password)
     except UserNotFoundException as e:
         raise HTTPException(
             status_code=404,
@@ -31,4 +31,47 @@ async def login(
             status_code=401,
             detail=e.detail
         )
-    return auth_service.login(body.username, body.password)
+
+
+@router.get(
+    "/login/google",
+    response_class=RedirectResponse
+)
+async def google_login(
+    auth_service: Annotated[AuthServices, Depends(get_auth_service)]
+):
+    redirect_url = auth_service.get_google_redirect_url()
+    print(redirect_url)
+    return RedirectResponse(redirect_url)
+
+
+@router.get(
+    "/google",
+)
+async def google_auth(
+    auth_service: Annotated[AuthServices, Depends(get_auth_service)],
+    code: str
+):
+    return auth_service.google_auth(code=code)
+
+
+@router.get(
+    "/login/yandex",
+    response_class=RedirectResponse
+)
+async def yandex_login(
+    auth_service: Annotated[AuthServices, Depends(get_auth_service)]
+):
+    redirect_url = auth_service.get_yandex_redirect_url()
+    print(redirect_url)
+    return RedirectResponse(redirect_url)
+
+
+@router.get(
+    "/yandex",
+)
+async def yandex_auth(
+    auth_service: Annotated[AuthServices, Depends(get_auth_service)],
+    code: str
+):
+    return auth_service.yandex_auth(code=code)

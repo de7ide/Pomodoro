@@ -1,6 +1,8 @@
 from fastapi import Depends, HTTPException, Request, Security, security
 from sqlalchemy.orm import Session
 
+from client.google import GoogleClient
+from client.yandex import YandexClient
 from database import get_db_session
 from cache import get_redis_conn
 from exception import TokenExpire, TokenInvalide
@@ -33,8 +35,25 @@ def get_user_repo(db_session: Session = Depends(get_db_session)):
     return UserRepo(db_session=db_session)
 
 
-def get_auth_service(user_repo: UserRepo = Depends(get_user_repo)) -> AuthServices:
-    return AuthServices(user_repo=user_repo, settings=Settings())
+def get_google_client() -> GoogleClient:
+    return GoogleClient(settings=Settings())
+
+
+def get_yandex_client() -> YandexClient:
+    return YandexClient(settings=Settings())
+
+
+def get_auth_service(
+        user_repo: UserRepo = Depends(get_user_repo),
+        google_client: GoogleClient = Depends(get_google_client),
+        yandex_client: YandexClient = Depends(get_yandex_client)
+) -> AuthServices:
+    return AuthServices(
+        user_repo=user_repo,
+        settings=Settings(),
+        google_client=google_client,
+        yandex_client=yandex_client
+    )
 
 
 def get_user_service(
