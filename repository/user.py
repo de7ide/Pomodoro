@@ -16,6 +16,7 @@ class UserRepo:
             return session.execute(query).scalar_one_or_none()
 
 
+
     def create_user(self, user: UserCreateSchema) -> UserProfile:
         query = insert(UserProfile).values(
             **user.model_dump(),
