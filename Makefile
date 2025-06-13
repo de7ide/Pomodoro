@@ -2,8 +2,7 @@
 
 
 run:
-	poetry run uvicorn main:app --reload --env-file .local.env
-
+	poetry run gunicorn app.main:app --worker-class uvicorn.workers.UvicornWorker -c gunicorn.conf.py
 
 install:
 	@echo "Installing dependency $(LIBRARY)"

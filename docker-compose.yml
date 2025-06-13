@@ -14,7 +14,7 @@ services:
   cache:
     image: redis:7.2.4-alpine
     ports:
-      - "6378:6378"
+      - "6378:6379"
 
   # rabbitmq:
   #   image: "rabbitmq:management"
